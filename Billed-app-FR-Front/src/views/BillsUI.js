@@ -20,7 +20,8 @@ const row = (bill) => {
   }
 
 const rows = (data) => {
-  return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
+  const antiChrono = (a, b) => (new Date(a.date) - new Date(b.date));
+  return (data && data.length) ? data.sort(antiChrono).map(bill => row(bill)).join("") : ""
 }
 
 export default ({ data: bills, loading, error }) => {
@@ -48,12 +49,6 @@ export default ({ data: bills, loading, error }) => {
     return ErrorPage(error)
   }
 
-  let billsSortedByDate = []
-  if(bills){
-    const antiChrono = (a, b) => (new Date(a.date) - new Date(b.date));
-    billsSortedByDate = bills.sort(antiChrono);
-  }
-
   return (`
     <div class='layout'>
       ${VerticalLayout(120)}
@@ -75,7 +70,7 @@ export default ({ data: bills, loading, error }) => {
               </tr>
           </thead>
           <tbody data-testid="tbody">
-            ${rows(billsSortedByDate)}
+            ${rows(bills)}
           </tbody>
           </table>
         </div>
