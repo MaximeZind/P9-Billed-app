@@ -25,30 +25,31 @@ export default class NewBill {
       e.target.dataset.errorVisible = true;
       e.target.dataset.error = 'Vous devez soumettre un fichier de type .jpg, .jpeg ou .png'
       e.target.value = '';
-      return
+      console.log('false');
+      return false
     } else if (regex.test(filePath)){
       e.target.dataset.errorVisible = false;
+      const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
+      const fileName = filePath[filePath.length-1]
+      const formData = new FormData()
+      const email = JSON.parse(localStorage.getItem("user")).email
+      formData.append('file', file)
+      formData.append('email', email)
+      this.store
+        .bills()
+        .create({
+          data: formData,
+          headers: {
+            noContentType: true
+          }
+        })
+        .then(({fileUrl, key}) => {
+          console.log(fileUrl)
+          this.billId = key
+          this.fileUrl = fileUrl
+          this.fileName = fileName
+        }).catch(error => console.error(error))
     }
-    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-    const fileName = filePath[filePath.length-1]
-    const formData = new FormData()
-    const email = JSON.parse(localStorage.getItem("user")).email
-    formData.append('file', file)
-    formData.append('email', email)
-    this.store
-      .bills()
-      .create({
-        data: formData,
-        headers: {
-          noContentType: true
-        }
-      })
-      .then(({fileUrl, key}) => {
-        console.log(fileUrl)
-        this.billId = key
-        this.fileUrl = fileUrl
-        this.fileName = fileName
-      }).catch(error => console.error(error))
   }
   handleSubmit = e => {
     e.preventDefault()

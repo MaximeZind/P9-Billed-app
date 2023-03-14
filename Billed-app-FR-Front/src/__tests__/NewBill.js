@@ -14,17 +14,31 @@ describe("Given I am connected as an employee", () => {
       document.body.innerHTML = html
       //to-do write assertion
     })
-    describe("When I submit a new file for upload", () => {
-      test("Then the file will have to be in the right format", () => {
-        const fileInput = screen.getByTestId("file")
-        const regex = /((.jpg)|(.jpeg)|(.png))$/
-        if (regex.test(fileInput.value)){
-          fireEvent.change(fileInput)
-          expect(fileInput.dataset.errorVisible === false)
-        } else if (!regex.test(fileInput.value)){
-          fireEvent.change(fileInput)
-          expect((fileInput.value.errorVisible === true) && (fileInput.value === ''))
-        }
+    describe("When I submit a new file for upload in the wrong format", () => {
+      test("Then the error message will be visible", () => {
+        const handleChangeFile = jest.fn(NewBill.handleChangeFile)
+        const fileInput = screen.getByTestId("file");
+        fileInput.addEventListener('change', handleChangeFile)
+        fireEvent.change(fileInput, {
+          target: {
+            files: [new File(['file content'], 'file.pdf', { type: 'pdf' })],
+          },
+        });
+        console.log(fileInput.files[0].name)
+        expect(handleChangeFile).toHaveReturnedWith(false);
+      })
+    })
+    describe("When I submit a new file for upload in the right format", () => {
+      test("Then the error message will be hidden", () => {
+        const handleChangeFile = jest.fn(NewBill.handleChangeFile)
+        const fileInput = screen.getByTestId("file");
+        fileInput.addEventListener('change', handleChangeFile)
+        fireEvent.change(fileInput, {
+          target: {
+            files: [new File(['file content'], 'file.jpg', { type: 'image/jpeg' })],
+          },
+        });
+        expect(fileInput.files[0].name).toBe("file.jpg");
       })
     })
   })

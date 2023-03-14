@@ -20,6 +20,7 @@ const row = (bill) => {
   }
 
 const rows = (data) => {
+  //On s'assure que les bills sont triées par date
   const antiChrono = (a, b) => (new Date(a.date) - new Date(b.date));
   return (data && data.length) ? data.sort(antiChrono).map(bill => row(bill)).join("") : ""
 }
