@@ -19,9 +19,15 @@ export default class NewBill {
     e.preventDefault();
     const regex = /((.jpg)|(.jpeg)|(.png))$/;
     const filePath = e.target.value.split(/\\/g)
+    //Si le fichier n'est pas au bon format, on renvoie un message d'erreur
+    //et le fichier ne peut pas être soumis
     if (!regex.test(filePath)){
+      e.target.dataset.errorVisible = true;
+      e.target.dataset.error = 'Vous devez soumettre un fichier de type .jpg, .jpeg ou .png'
       e.target.value = '';
       return
+    } else if (regex.test(filePath)){
+      e.target.dataset.errorVisible = false;
     }
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const fileName = filePath[filePath.length-1]
