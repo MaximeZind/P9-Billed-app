@@ -37,6 +37,7 @@ describe("Given I am connected as an employee", () => {
     })
     describe("When I click on the eye Icon of a Bill", () => {
       test("Then the modal should open and show the right file", async () => {
+        document.body.innerHTML = BillsUI({ data: bills })
         const eyes = screen.getAllByTestId("icon-eye");
         const modal = screen.getByTestId("modaleFile");
         await Promise.all(

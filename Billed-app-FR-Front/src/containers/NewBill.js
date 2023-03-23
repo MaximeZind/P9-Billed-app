@@ -17,19 +17,21 @@ export default class NewBill {
   }
   handleChangeFile = e => {
     e.preventDefault();
-    const regex = /((.jpg)|(.jpeg)|(.png))$/;
-    const filePath = e.target.value.split(/\\/g)
+    console.log("handleChangeFile called!");
+    // const regex = /((.jpg)|(.jpeg)|(.png))$/;
+    const okFileType = ["image/jpg", "image/jpeg", "image/png"];
+    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     //Si le fichier n'est pas au bon format, on renvoie un message d'erreur
     //et le fichier ne peut pas être soumis
-    if (!regex.test(filePath)){
+    console.log(file.type, file, okFileType.includes(file.type))
+    if (!okFileType.includes(file.type)){
       e.target.dataset.errorVisible = true;
       e.target.dataset.error = 'Vous devez soumettre un fichier de type .jpg, .jpeg ou .png'
       e.target.value = '';
-      console.log('false');
       return false
-    } else if (regex.test(filePath)){
+    } else if (okFileType.includes(file.type)){
       e.target.dataset.errorVisible = false;
-      const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
+      const filePath = e.target.value.split(/\\/g);
       const fileName = filePath[filePath.length-1]
       const formData = new FormData()
       const email = JSON.parse(localStorage.getItem("user")).email
