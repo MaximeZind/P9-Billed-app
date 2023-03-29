@@ -13,7 +13,6 @@ describe("Given I'm connected as an employee", () => {
   beforeEach(() => {
     document.body.innerHTML = NewBillUI();
     Object.defineProperty(window, "localStorage", {value: localStorageMock});
-    // console.log(localStorageMock);
     window.localStorage.setItem("user", JSON.stringify({type: "Employee", email: "employee@test.fr"}));
     newBill = new NewBill({
       document,
@@ -42,6 +41,15 @@ describe("Given I'm connected as an employee", () => {
         const event = { target: { files: [file] }}; 
         fireEvent.change(fileInput, event);
         expect(fileInput.files[0].name).toBe("test.jpg");
+      });
+    });
+    describe("When I submit a new bill in the form", () => {
+      test("Then handleSubmit should've been called", () => {
+        const form = screen.getByTestId("form-new-bill");
+        const handleSubmit = jest.fn(newBill.handleSubmit);
+        form.addEventListener('submit', handleSubmit);
+        fireEvent.submit(form);
+        expect(handleSubmit).toHaveBeenCalled();
       });
     });
 });

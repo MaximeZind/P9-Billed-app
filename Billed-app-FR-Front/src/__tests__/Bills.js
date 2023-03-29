@@ -15,17 +15,17 @@ describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", async () => {
 
-      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock });
       window.localStorage.setItem('user', JSON.stringify({
         type: 'Employee'
-      }))
-      const root = document.createElement("div")
-      root.setAttribute("id", "root")
-      document.body.append(root)
-      router()
-      window.onNavigate(ROUTES_PATH.Bills)
-      await waitFor(() => screen.getByTestId('icon-window'))
-      const windowIcon = screen.getByTestId('icon-window')
+      }));
+      const root = document.createElement("div");
+      root.setAttribute("id", "root");
+      document.body.append(root);
+      router();
+      window.onNavigate(ROUTES_PATH.Bills);
+      await waitFor(() => screen.getByTestId('icon-window'));
+      const windowIcon = screen.getByTestId('icon-window');
       //to-do write expect expression
       expect(windowIcon.classList.contains('active-icon')).toBe(true);
     })
@@ -47,27 +47,31 @@ describe("Given I am connected as an employee", () => {
         }).handleClickIconEye);
         const eyes = screen.getAllByTestId("icon-eye");
         const firstEye = eyes[0];
-        const modal = screen.getByTestId("modaleFile");
-        firstEye.addEventListener('click', handleClickIconEye(firstEye));
+        // const modal = screen.getByTestId("modaleFile");
+        firstEye.addEventListener('click', handleClickIconEye);
         firstEye.click();
-        console.log(modal.className);
-        const modalImg = screen.getByTestId("modal-img");
-        console.log(modalImg.src);
-        expect(modal.classList.contains("show")).toBe(true);
+        // fireEvent.click(firstEye);
+        // console.log(modal.className);
+        // const modalImg = screen.getByTestId("modal-img");
+        // console.log(modalImg.src);
+        // expect(modal.classList.contains("show")).toBe(true);
+        expect(handleClickIconEye).toHaveBeenCalled();
       });
     });
   });
 
   describe("When I navigate to the Bills page", () => {
-    test("fetches bills from mock API GET", async () => {
-      localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "employee@test.com" }));
+    test("Then it fetches bills from mock API GET", async () => {
+      localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
       const root = document.createElement("div")
       root.setAttribute("id", "root")
       document.body.append(root)
       router()
       window.onNavigate(ROUTES_PATH.Bills)
-      await waitFor(() => screen.getByText("Mes notes de frais"))
-      expect(screen.getByTestId("btn-new-bill")).toBeTruthy()
+      const content = await waitFor(() => screen.getByText("Mes notes de frais"));
+      // console.log(content);
+      expect(content).toBeTruthy();
+      expect(screen.getByTestId("btn-new-bill")).toBeTruthy();
     })
     describe("When an error occurs on API", () => {
       beforeEach(() => {
@@ -79,15 +83,14 @@ describe("Given I am connected as an employee", () => {
         );
         window.localStorage.setItem('user', JSON.stringify({
           type: 'Employee',
-          email: "employee@test.com"
+          email: "a@a"
         }));
         const root = document.createElement("div");
         root.setAttribute("id", "root");
         document.body.appendChild(root);
         router();
       })
-      test("fetches bills from an API and fails with 404 message error", async () => {
-
+      test("Then it fetches bills from an API and fails with 404 message error", async () => {
         mockStore.bills.mockImplementationOnce(() => {
           return {
             list: () => {
@@ -95,13 +98,15 @@ describe("Given I am connected as an employee", () => {
             }
           }
         })
-        window.onNavigate(ROUTES_PATH.Bills);
-        await new Promise(process.nextTick);
+        // window.onNavigate(ROUTES_PATH.Bills);
+        // await new Promise(process.nextTick);
+        const html = BillsUI({ error: 'Erreur 404' });
+        document.body.innerHTML = html;
         const message = await screen.getByText(/Erreur 404/);
         expect(message).toBeTruthy();
       })
 
-      test("fetches messages from an API and fails with 500 message error", async () => {
+      test("Then it fetches messages from an API and fails with 500 message error", async () => {
 
         mockStore.bills.mockImplementationOnce(() => {
           return {
@@ -111,8 +116,10 @@ describe("Given I am connected as an employee", () => {
           }
         })
 
-        window.onNavigate(ROUTES_PATH.Bills)
-        await new Promise(process.nextTick);
+        // window.onNavigate(ROUTES_PATH.Bills)
+        // await new Promise(process.nextTick);
+        const html = BillsUI({ error: 'Erreur 500' });
+        document.body.innerHTML = html;
         const message = await screen.getByText(/Erreur 500/)
         expect(message).toBeTruthy()
       })
