@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { fireEvent, screen } from "@testing-library/dom"
+import { fireEvent, screen, waitFor } from "@testing-library/dom"
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 import {localStorageMock} from "../__mocks__/localStorage.js"
@@ -50,6 +50,15 @@ describe("Given I'm connected as an employee", () => {
         form.addEventListener('submit', handleSubmit);
         fireEvent.submit(form);
         expect(handleSubmit).toHaveBeenCalled();
+      });
+      test("Then I should be brought back to the bills page", async () => {
+        const form = screen.getByTestId("form-new-bill");
+        const handleSubmit = jest.fn(newBill.handleSubmit);
+        form.addEventListener('submit', handleSubmit);
+        fireEvent.submit(form);
+        await handleSubmit;
+        await waitFor(() => screen.getByTestId('btn-new-bill'));
+        expect(screen.getByTestId('btn-new-bill')).toBeTruthy();
       });
     });
 });

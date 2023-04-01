@@ -23,7 +23,6 @@ export default class NewBill {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     //Si le fichier n'est pas au bon format, on renvoie un message d'erreur
     //et le fichier ne peut pas être soumis
-    console.log(file.type, file, okFileType.includes(file.type))
     if (!okFileType.includes(file.type)){
       e.target.dataset.errorVisible = true;
       e.target.dataset.error = 'Vous devez soumettre un fichier de type .jpg, .jpeg ou .png'
