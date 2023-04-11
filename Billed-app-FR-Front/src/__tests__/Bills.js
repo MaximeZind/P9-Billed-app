@@ -10,6 +10,7 @@ import { localStorageMock } from "../__mocks__/localStorage.js";
 import Bills from "../containers/Bills.js";
 import mockStore from "../__mocks__/store.js"
 import router from "../app/Router.js";
+import { formatDate } from "../app/format.js";
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -37,30 +38,91 @@ describe("Given I am connected as an employee", () => {
       expect(dates).toEqual(datesSorted)
     })
     describe("When I click on the eye Icon of a Bill", () => {
-      test("Then the modal should open and show the right file", async () => {
+      test("Then the function handleClickIconEye should have been called", async () => {
         document.body.innerHTML = BillsUI({ data: bills });
-        const handleClickIconEye = jest.fn(new Bills({
+        const newBill = new Bills({
           document,
           onNavigate: jest.fn(),
-          store: mockStore,
+          store: null,
           localStorage: localStorageMock
-        }).handleClickIconEye);
+        });
+        $.fn.modal = jest.fn();
+        const handleClickIconEye = jest.fn(() => {newBill.handleClickIconEye});
         const eyes = screen.getAllByTestId("icon-eye");
         const firstEye = eyes[0];
-        // const modal = screen.getByTestId("modaleFile");
         firstEye.addEventListener('click', handleClickIconEye);
-        firstEye.click();
-        // fireEvent.click(firstEye);
-        // console.log(modal.className);
-        // const modalImg = screen.getByTestId("modal-img");
-        // console.log(modalImg.src);
-        // expect(modal.classList.contains("show")).toBe(true);
+        fireEvent.click(firstEye);
         expect(handleClickIconEye).toHaveBeenCalled();
+        expect($.fn.modal).toHaveBeenCalled();
+      });
+    });
+    describe("When I click on the 'Nouvelle note de frais' button", () => {
+      test("Then handleClickNewBill should be called", () => {
+        document.body.innerHTML = BillsUI({ data: bills });
+        const newBill = new Bills({
+          document,
+          onNavigate: jest.fn(),
+          store: null,
+          localStorage: localStorageMock
+        });
+        const newBillBtn = screen.getByTestId("btn-new-bill");
+        const handleClickNewBill = jest.fn(() => {newBill.handleClickNewBill});
+        newBillBtn.addEventListener('click', handleClickNewBill);
+        fireEvent.click(newBillBtn);
+        expect(handleClickNewBill).toHaveBeenCalled();
       });
     });
   });
 
   describe("When I navigate to the Bills page", () => {
+    describe('When getBills is called', () => {
+      //Test getBills
+      test('then it should return an array of bills', async () => {
+        const store = {
+          bills: jest.fn(() => ({
+            list: jest.fn(() => Promise.resolve([
+              {
+                id: '123',
+                email: 'test@test.com',
+                name: 'Test',
+                amount: 100,
+                date: '2022-03-16',
+                type: 'Hôtel',
+                commentary: 'Test',
+                fileUrl: 'https://example.com/test.png',
+                fileName: 'test.png',
+                status: 'pending',
+                vat: 20
+              }
+            ]))
+          }))
+        };
+        
+        const bills = new Bills({
+          document: document,
+          onNavigate: jest.fn(),
+          store: store,
+          localStorage: window.localStorageMock
+        });
+  
+        const result = await bills.getBills();
+        expect(result).toEqual([
+          {
+            id: '123',
+            email: 'test@test.com',
+            name: 'Test',
+            amount: 100,
+            date: formatDate(new Date("2022-03-16")),
+            type: 'Hôtel',
+            commentary: 'Test',
+            fileUrl: 'https://example.com/test.png',
+            fileName: 'test.png',
+            status: 'En attente',
+            vat: 20
+          }
+        ]);
+      });
+    });
     test("Then it fetches bills from mock API GET", async () => {
       localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
       const root = document.createElement("div")
@@ -69,7 +131,6 @@ describe("Given I am connected as an employee", () => {
       router()
       window.onNavigate(ROUTES_PATH.Bills)
       const content = await waitFor(() => screen.getByText("Mes notes de frais"));
-      // console.log(content);
       expect(content).toBeTruthy();
       expect(screen.getByTestId("btn-new-bill")).toBeTruthy();
     })
@@ -124,7 +185,6 @@ describe("Given I am connected as an employee", () => {
         expect(message).toBeTruthy()
       })
     })
-
   })
 });
 

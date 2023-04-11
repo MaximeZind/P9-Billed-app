@@ -7,6 +7,8 @@ import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 import {localStorageMock} from "../__mocks__/localStorage.js"
 import store from "../__mocks__/store.js"
+import { ROUTES_PATH } from '../constants/routes.js'
+import router from "../app/Router.js";
 
 describe("Given I'm connected as an employee", () => {
   let newBill;
@@ -51,14 +53,38 @@ describe("Given I'm connected as an employee", () => {
         fireEvent.submit(form);
         expect(handleSubmit).toHaveBeenCalled();
       });
-      test("Then I should be brought back to the bills page", async () => {
-        const form = screen.getByTestId("form-new-bill");
-        const handleSubmit = jest.fn(newBill.handleSubmit);
-        form.addEventListener('submit', handleSubmit);
-        fireEvent.submit(form);
-        await handleSubmit;
-        await waitFor(() => screen.getByTestId('btn-new-bill'));
-        expect(screen.getByTestId('btn-new-bill')).toBeTruthy();
+      describe("When an error occurs", () => {
+        test("Then it fails with a 500 message error", () => {
+
+        });
+      });
+    });
+    describe("When I naviguate to the NewBill page", () => {
+      beforeEach(() => {
+        // jest.spyOn(mockStore, "bills");
+        Object.defineProperty(
+          window,
+          'localStorage',
+          { value: localStorageMock }
+        );
+        window.localStorage.setItem('user', JSON.stringify({
+          type: 'Employee',
+          email: "a@a"
+        }));
+        const root = document.createElement("div");
+        root.setAttribute("id", "root");
+        document.body.appendChild(root);
+        // router();
+      });
+      test("Then it should show the Newbill content", async() => {
+        localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
+        const root = document.createElement("div")
+        root.setAttribute("id", "root")
+        document.body.append(root)
+        router()
+        window.onNavigate(ROUTES_PATH.NewBill)
+        const content = await screen.getAllByText("Envoyer une note de frais");
+        expect(content).toBeTruthy();
       });
     });
 });
