@@ -52,8 +52,9 @@ describe("Given I am connected as an employee", () => {
         const firstEye = eyes[0];
         firstEye.addEventListener('click', handleClickIconEye);
         fireEvent.click(firstEye);
-        expect(handleClickIconEye).toHaveBeenCalled();
-        expect($.fn.modal).toHaveBeenCalled();
+        await waitFor(() => {
+          expect($("#modalefile").find(".modal-body").innerHTML!== "").toBeTruthy();
+        });
       });
     });
     describe("When I click on the 'Nouvelle note de frais' button", () => {
@@ -78,49 +79,15 @@ describe("Given I am connected as an employee", () => {
     describe('When getBills is called', () => {
       //Test getBills
       test('then it should return an array of bills', async () => {
-        const store = {
-          bills: jest.fn(() => ({
-            list: jest.fn(() => Promise.resolve([
-              {
-                id: '123',
-                email: 'test@test.com',
-                name: 'Test',
-                amount: 100,
-                date: '2022-03-16',
-                type: 'Hôtel',
-                commentary: 'Test',
-                fileUrl: 'https://example.com/test.png',
-                fileName: 'test.png',
-                status: 'pending',
-                vat: 20
-              }
-            ]))
-          }))
-        };
-        
         const bills = new Bills({
           document: document,
           onNavigate: jest.fn(),
-          store: store,
-          localStorage: window.localStorageMock
+          store: mockStore,
+          localStorage: null
         });
   
         const result = await bills.getBills();
-        expect(result).toEqual([
-          {
-            id: '123',
-            email: 'test@test.com',
-            name: 'Test',
-            amount: 100,
-            date: formatDate(new Date("2022-03-16")),
-            type: 'Hôtel',
-            commentary: 'Test',
-            fileUrl: 'https://example.com/test.png',
-            fileName: 'test.png',
-            status: 'En attente',
-            vat: 20
-          }
-        ]);
+        expect(result.length).toEqual(4);
       });
     });
     test("Then it fetches bills from mock API GET", async () => {

@@ -17,8 +17,6 @@ export default class NewBill {
   }
   handleChangeFile = e => {
     e.preventDefault();
-    console.log("handleChangeFile called!");
-    // const regex = /((.jpg)|(.jpeg)|(.png))$/;
     const okFileType = ["image/jpg", "image/jpeg", "image/png"];
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     //Si le fichier n'est pas au bon format, on renvoie un message d'erreur

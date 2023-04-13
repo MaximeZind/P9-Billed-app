@@ -10,7 +10,7 @@ import store from "../__mocks__/store.js"
 import { ROUTES_PATH } from '../constants/routes.js'
 import router from "../app/Router.js";
 
-describe("Given I'm connected as an employee", () => {
+describe("Given I'm connected as an employee on the NewBill page", () => {
   let newBill;
   beforeEach(() => {
     document.body.innerHTML = NewBillUI();
@@ -45,6 +45,9 @@ describe("Given I'm connected as an employee", () => {
         expect(fileInput.files[0].name).toBe("test.jpg");
       });
     });
+
+
+    //test fonctionnel
     describe("When I submit a new bill in the form", () => {
       test("Then handleSubmit should've been called", () => {
         const form = screen.getByTestId("form-new-bill");
@@ -53,15 +56,9 @@ describe("Given I'm connected as an employee", () => {
         fireEvent.submit(form);
         expect(handleSubmit).toHaveBeenCalled();
       });
-      describe("When an error occurs", () => {
-        test("Then it fails with a 500 message error", () => {
-
-        });
-      });
     });
     describe("When I naviguate to the NewBill page", () => {
       beforeEach(() => {
-        // jest.spyOn(mockStore, "bills");
         Object.defineProperty(
           window,
           'localStorage',
@@ -74,7 +71,6 @@ describe("Given I'm connected as an employee", () => {
         const root = document.createElement("div");
         root.setAttribute("id", "root");
         document.body.appendChild(root);
-        // router();
       });
       test("Then it should show the Newbill content", async() => {
         localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
@@ -87,4 +83,10 @@ describe("Given I'm connected as an employee", () => {
         expect(content).toBeTruthy();
       });
     });
+    describe("When I submit a form", () => {
+      describe("When there is a mistake in the form", () => {
+        test()
+      });
+    });
 });
+
