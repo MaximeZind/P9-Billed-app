@@ -10,7 +10,7 @@ import { localStorageMock } from "../__mocks__/localStorage.js";
 import Bills from "../containers/Bills.js";
 import mockStore from "../__mocks__/store.js"
 import router from "../app/Router.js";
-import { formatDate } from "../app/format.js";
+
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -47,13 +47,13 @@ describe("Given I am connected as an employee", () => {
           localStorage: localStorageMock
         });
         $.fn.modal = jest.fn();
-        const handleClickIconEye = jest.fn(() => {newBill.handleClickIconEye});
+        const handleClickIconEye = jest.fn(() => { newBill.handleClickIconEye });
         const eyes = screen.getAllByTestId("icon-eye");
         const firstEye = eyes[0];
         firstEye.addEventListener('click', handleClickIconEye);
         fireEvent.click(firstEye);
         await waitFor(() => {
-          expect($("#modalefile").find(".modal-body").innerHTML!== "").toBeTruthy();
+          expect($("#modalefile").find(".modal-body").innerHTML !== "").toBeTruthy();
         });
       });
     });
@@ -67,7 +67,7 @@ describe("Given I am connected as an employee", () => {
           localStorage: localStorageMock
         });
         const newBillBtn = screen.getByTestId("btn-new-bill");
-        const handleClickNewBill = jest.fn(() => {newBill.handleClickNewBill});
+        const handleClickNewBill = jest.fn(() => { newBill.handleClickNewBill });
         newBillBtn.addEventListener('click', handleClickNewBill);
         fireEvent.click(newBillBtn);
         expect(handleClickNewBill).toHaveBeenCalled();
@@ -85,7 +85,7 @@ describe("Given I am connected as an employee", () => {
           store: mockStore,
           localStorage: null
         });
-  
+
         const result = await bills.getBills();
         expect(result.length).toEqual(4);
       });
@@ -143,9 +143,6 @@ describe("Given I am connected as an employee", () => {
             }
           }
         })
-
-        // window.onNavigate(ROUTES_PATH.Bills)
-        // await new Promise(process.nextTick);
         const html = BillsUI({ error: 'Erreur 500' });
         document.body.innerHTML = html;
         const message = await screen.getByText(/Erreur 500/)

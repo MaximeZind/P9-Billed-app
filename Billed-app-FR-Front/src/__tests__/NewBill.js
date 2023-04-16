@@ -3,6 +3,7 @@
  */
 
 import { fireEvent, screen, waitFor } from "@testing-library/dom"
+import BillsUI from "../views/BillsUI.js"
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 import {localStorageMock} from "../__mocks__/localStorage.js"
@@ -83,9 +84,19 @@ describe("Given I'm connected as an employee on the NewBill page", () => {
         expect(content).toBeTruthy();
       });
     });
-    describe("When I submit a form", () => {
-      describe("When there is a mistake in the form", () => {
-        test()
+    describe("When I submit the form and there's an error with the server", () => {
+      test("Then there is a mistake and it fails with 500 error message", async () => {
+        store.bills(() => {
+          return {
+            list: () => {
+              return Promise.reject(new Error("Erreur 500"))
+            }
+          }
+        })
+        const html = BillsUI({ error: 'Erreur 500' });
+        document.body.innerHTML = html;
+        const message = await screen.getByText(/Erreur 500/)
+        expect(message).toBeTruthy()
       });
     });
 });
