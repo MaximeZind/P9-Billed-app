@@ -24,6 +24,7 @@ describe("Given I'm connected as an employee on the NewBill page", () => {
       localStorage: localStorageMock
     });
   });
+  // Tests de vérification du format de fichier soumis par l'utilisateur
     describe("When I select a file to upload that is not .jpg .jpeg or .png", () => {
       test("Then the form should be empty", () => {
         const handleChangeFile = jest.fn(newBill.handleChangeFile);
@@ -49,15 +50,6 @@ describe("Given I'm connected as an employee on the NewBill page", () => {
 
 
     //test fonctionnel
-    describe("When I submit a new bill in the form", () => {
-      test("Then handleSubmit should've been called", () => {
-        const form = screen.getByTestId("form-new-bill");
-        const handleSubmit = jest.fn(newBill.handleSubmit);
-        form.addEventListener('submit', handleSubmit);
-        fireEvent.submit(form);
-        expect(handleSubmit).toHaveBeenCalled();
-      });
-    });
     describe("When I naviguate to the NewBill page", () => {
       beforeEach(() => {
         Object.defineProperty(
@@ -73,6 +65,7 @@ describe("Given I'm connected as an employee on the NewBill page", () => {
         root.setAttribute("id", "root");
         document.body.appendChild(root);
       });
+      //Test du chargement de la page
       test("Then it should show the Newbill content", async() => {
         localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
         const root = document.createElement("div")
@@ -84,7 +77,18 @@ describe("Given I'm connected as an employee on the NewBill page", () => {
         expect(content).toBeTruthy();
       });
     });
+    describe("When I submit a new bill in the form", () => {
+      //Test d'envoi du formulaire
+      test("Then handleSubmit should've been called", () => {
+        const form = screen.getByTestId("form-new-bill");
+        const handleSubmit = jest.fn(newBill.handleSubmit);
+        form.addEventListener('submit', handleSubmit);
+        fireEvent.submit(form);
+        expect(handleSubmit).toHaveBeenCalled();
+      });
+    });
     describe("When I submit the form and there's an error with the server", () => {
+      //erreur 500
       test("Then there is a mistake and it fails with 500 error message", async () => {
         store.bills(() => {
           return {

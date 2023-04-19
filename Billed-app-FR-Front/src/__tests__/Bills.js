@@ -38,7 +38,8 @@ describe("Given I am connected as an employee", () => {
       expect(dates).toEqual(datesSorted)
     })
     describe("When I click on the eye Icon of a Bill", () => {
-      test("Then the function handleClickIconEye should have been called", async () => {
+      //Test modal (handleIconEye)
+      test("Then the modal should have appeared", async () => {
         document.body.innerHTML = BillsUI({ data: bills });
         const newBill = new Bills({
           document,
@@ -58,6 +59,7 @@ describe("Given I am connected as an employee", () => {
       });
     });
     describe("When I click on the 'Nouvelle note de frais' button", () => {
+      //Test handleClickNewBill appelé lorsque le bouton est cliqué
       test("Then handleClickNewBill should be called", () => {
         document.body.innerHTML = BillsUI({ data: bills });
         const newBill = new Bills({
@@ -75,6 +77,8 @@ describe("Given I am connected as an employee", () => {
     });
   });
 
+
+  //Tests d'intégration
   describe("When I navigate to the Bills page", () => {
     describe('When getBills is called', () => {
       //Test getBills
@@ -90,6 +94,7 @@ describe("Given I am connected as an employee", () => {
         expect(result.length).toEqual(4);
       });
     });
+    //La page se charge et se crée correctement
     test("Then it fetches bills from mock API GET", async () => {
       localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
       const root = document.createElement("div")
@@ -118,6 +123,7 @@ describe("Given I am connected as an employee", () => {
         document.body.appendChild(root);
         router();
       })
+      //erreur 404
       test("Then it fetches bills from an API and fails with 404 message error", async () => {
         mockStore.bills.mockImplementationOnce(() => {
           return {
@@ -126,16 +132,13 @@ describe("Given I am connected as an employee", () => {
             }
           }
         })
-        // window.onNavigate(ROUTES_PATH.Bills);
-        // await new Promise(process.nextTick);
         const html = BillsUI({ error: 'Erreur 404' });
         document.body.innerHTML = html;
         const message = await screen.getByText(/Erreur 404/);
         expect(message).toBeTruthy();
       })
-
+      // erreur 500
       test("Then it fetches messages from an API and fails with 500 message error", async () => {
-
         mockStore.bills.mockImplementationOnce(() => {
           return {
             list: () => {
