@@ -61,3 +61,27 @@ textarea:focus, input:focus, select:focus {
 *[placeholder] {
   color: #0E5AE5 !important;
 }
+
+.form-control[data-error]::after {
+  content: attr(data-error);
+  font-size: 0.9em;
+  color: #e54858;
+  display: block;
+  margin-top: 7px;
+  margin-bottom: 7px;
+  text-align: right;
+  line-height: 0.3;
+  opacity: 0;
+  transition: 0.3s;
+}
+.form-control[data-error-visible="true"]::after {
+  opacity: 1;
+}
+.form-control[data-error-visible="true"] {
+  border: 2px solid #e54858;
+} 
+input[data-error]::after {
+    content: attr(data-error);
+    font-size: 0.4em;
+    color: red;
+}
